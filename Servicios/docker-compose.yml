@@ -1,0 +1,51 @@
+services:
+  mysql:
+    image: mariadb:10.8
+    expose:
+      - 3306
+    volumes:
+      - E:\desarrollo\proyectoCursoIoT\Servicios\mosquitto\datos:/mosquitto/data
+      - E:\desarrollo\proyectoCursoIoT\Servicios\mosquitto\registros:/mosquitto/log
+    environment:
+      MARIADB_ROOT_PASSWORD: ro0tP@ss
+      MARIADB_DATABASE: db_casa_segura
+    networks:
+      casasegura:
+        aliases:
+          - database
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0.14
+    ports:
+      - 1883:1883
+      - 9001:9001
+    networks:
+      casasegura:
+        aliases:
+          - mosquitto
+
+  co2back2:
+    image: krauser36/co2back:out
+    ports:
+      - 8000:8000
+    networks:
+      co2network:
+        aliases:
+          - co2back2
+
+  co2front:
+    image: krauser36/co2front:1.1
+    ports:
+      - 8080:80
+    networks:
+      - co2network
+
+volumes:
+  datos:
+    driver: local
+  registros:
+    driver: local
+  
+
+networks:
+  co2network: {}
