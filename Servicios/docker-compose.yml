@@ -4,48 +4,80 @@ services:
     expose:
       - 3306
     volumes:
-      - E:\desarrollo\proyectoCursoIoT\Servicios\mosquitto\datos:/mosquitto/data
-      - E:\desarrollo\proyectoCursoIoT\Servicios\mosquitto\registros:/mosquitto/log
+      - D:\desarrollo\capstone\Servicios\dbdata:/var/lib/mysql
     environment:
       MARIADB_ROOT_PASSWORD: ro0tP@ss
       MARIADB_DATABASE: db_casa_segura
     networks:
       casasegura:
         aliases:
-          - database
+          - mysql
 
   mosquitto:
     image: eclipse-mosquitto:2.0.14
     ports:
       - 1883:1883
       - 9001:9001
+    volumes:
+      - D:\desarrollo\capstone\Servicios\mosquitto\datos:/mosquitto/data
+      - D:\desarrollo\capstone\Servicios\mosquitto\registros:/mosquitto/log
     networks:
       casasegura:
         aliases:
           - mosquitto
 
-  co2back2:
-    image: krauser36/co2back:out
+  nodered:
+    image: nodered/node-red:2.2.2-12
     ports:
-      - 8000:8000
+      - 1880:1880
+    volumes:
+      - D:\desarrollo\capstone\Servicios\nodered\data:/data
     networks:
-      co2network:
+      casasegura:
         aliases:
-          - co2back2
+          - nodered
 
-  co2front:
-    image: krauser36/co2front:1.1
+  openhab:
+    image: "openhab/openhab:3.3.0"
+    restart: always
+    network_mode: host
     ports:
-      - 8080:80
+      - 8080:8080
+      - 5007:5007
+      - 8101:8101
+      - 8443:8443
+    volumes:
+      - D:\desarrollo\capstone\Servicios\openhab\addons:/openhab/addons
+      - D:\desarrollo\capstone\Servicios\openhab\conf:/openhab/conf
+      - D:\desarrollo\capstone\Servicios\openhab\userdata:/openhab/userdata
+    environment:
+      OPENHAB_HTTP_PORT: "8080"
+      OPENHAB_HTTPS_PORT: "8443"
+      EXTRA_JAVA_OPTS: "-Duser.timezone=America/Mexico_City"
     networks:
-      - co2network
+      casasegura:
+        aliases:
+          - openhab
 
 volumes:
   datos:
     driver: local
   registros:
     driver: local
+  dbdata:
+    driver: local
+  localtime:
+    driver: local
+  timezone:
+    driver: local
+  addons:
+    driver: local
+  conf:
+    driver: local
+  userdata:
+    driver: local
+  data:
+    driver: local
   
-
 networks:
-  co2network: {}
+   casasegura: {}

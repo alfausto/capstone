@@ -1,0 +1,4 @@
+2022-07-12 11:49:09.339 [INFO ] [.core.model.lsp.internal.ModelServer] - Started Language Server Protocol (LSP) service on port 5007
+2022-07-12 11:49:12.587 [INFO ] [org.openhab.ui.internal.UIService   ] - Started UI on port 8080
+2022-07-12 11:49:13.373 [INFO ] [ab.ui.habpanel.internal.HABPanelTile] - Started HABPanel at /habpanel
+2022-07-12 11:49:18.605 [INFO ] [e.automation.internal.RuleEngineImpl] - Rule engine started.
