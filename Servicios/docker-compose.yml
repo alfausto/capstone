@@ -1,3 +1,5 @@
+version: '2.2'
+
 #Script de definición de servicios para su levantamiento como entorno de trabajo
 # Se documentará cada elemento del archivo solo 1 vez. Si existen comentarios repetidos, 
 # volver a comentarios anteriores para buscar la definición.
