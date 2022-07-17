@@ -75,9 +75,14 @@ services:
       - 8080:8080
       - 8443:8443
     volumes:
+      #Forma Windows
       - D:\desarrollo\capstone\Servicios\openhab\addons:/openhab/addons
       - D:\desarrollo\capstone\Servicios\openhab\conf:/openhab/conf
       - D:\desarrollo\capstone\Servicios\openhab\userdata:/openhab/userdata
+      #Forma Linux/Mac
+      #- ./Servicios/openhab/addons:/openhab/addons
+      #- ./Servicios/openhab/conf:/openhab/conf
+      #- ./Servicios/openhab/userdata:/openhab/userdata
     environment:
       OPENHAB_HTTP_PORT: "8080"
       OPENHAB_HTTPS_PORT: "8443"
