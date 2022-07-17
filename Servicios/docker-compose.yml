@@ -1,50 +1,78 @@
+#Script de definición de servicios para su levantamiento como entorno de trabajo
+# Se documentará cada elemento del archivo solo 1 vez. Si existen comentarios repetidos, 
+# volver a comentarios anteriores para buscar la definición.
+
+#Comenzamos a configurar la lista de servicios (contenedores) que levantaremos
 services:
+  #Nombre del servicio. A este servicio lo denominaremos "mysql"
   mysql:
+    #Imagen/Version de mariadb(mysql) que vamos a utilizar. La sintaxis es <nombreDeLaImagen>:<tag/version>
     image: mariadb:10.8
+    #Expose permite abrir un puerto de manera interna (para uso con otros contenedores). En este caso, se podrá usar
+    # el puerto 3306 entre los contenedores de docker
     expose:
       - 3306
+    #Define la carpeta origenLocal:origenImagen. En este caso, significa que en la carpeta que estoy definiendo como origenLocal
+    # guardará los datos de la BD, ya que var/lib/mysql es la carpeta que usa por defecto el servicio de mysql para guardar datos
     volumes:
+      #Forma Windows. Se tiene que anotar la dirección absoluta.
       - D:\desarrollo\capstone\Servicios\dbdata:/var/lib/mysql
+      #Forma Linux/Mac. Puede ser direccion absoluta o relativa.
+      #- ./Servicios/dbdata:/var/lib/mysql
+    #Variables de entorno. Para usarse dentro de la imagen. Permite añadir configuraciones adicionales para poder utilizar la
+    # base de datos. En este caso, base de datos a crear por defecto y contraseña de root en mysql.
     environment:
       MARIADB_ROOT_PASSWORD: ro0tP@ss
       MARIADB_DATABASE: db_casa_segura
+    #Define a que red se conectará y bajo que nombre. En este caso, el servicio llamado mysql se conectará a la red "casasegura" con
+    # el nombre (alias) de "mysql".
     networks:
       casasegura:
         aliases:
           - mysql
 
+  #Definición de un servicio llamado "mosquitto".
   mosquitto:
     image: eclipse-mosquitto:2.0.14
+    #ports permite abrir uno o varios puertos de manera externa. Se tienen que definir de la forma <puertoExterno(host)>:<puertoInterno(contenedor)>
+    # en este caso se hace publico el puerto 1883 y 9001 del contenedor a sus homonimos en el host.
     ports:
       - 1883:1883
       - 9001:9001
     volumes:
+      #Forma WIndows
       - D:\desarrollo\capstone\Servicios\mosquitto\datos:/mosquitto/data
       - D:\desarrollo\capstone\Servicios\mosquitto\registros:/mosquitto/log
+      #Forma Linux/Mac
+      #- ./Servicios/mosquitto/datos:/mosquitto/data
+      #- ./Servicios/mosquitto/registros:/mosquitto/log
     networks:
       casasegura:
         aliases:
           - mosquitto
 
+  #Definición de servicio nodered
   nodered:
     image: nodered/node-red:2.2.2-12
     ports:
       - 1880:1880
     volumes:
+      #Forma Windows
       - D:\desarrollo\capstone\Servicios\nodered\data:/data
+      #FormaLinux/Mac
+      #- ./Servicios/nodered/data:/data
     networks:
       casasegura:
         aliases:
           - nodered
 
+  #Definición de servicio openhab
   openhab:
     image: "openhab/openhab:3.3.0"
+    #Configurar si se desea levantar el servicio cada que caiga. En este caso activamos la opcion. Puede añadirse a las anteriores sin problema.
     restart: always
-    network_mode: host
     ports:
       - 8080:8080
-      - 5007:5007
-      - 8101:8101
       - 8443:8443
     volumes:
       - D:\desarrollo\capstone\Servicios\openhab\addons:/openhab/addons
@@ -59,6 +87,8 @@ services:
         aliases:
           - openhab
 
+#Configuramos todas aquellas carpetas que se escibieron en los servicios. Se pueden usar distintos tipos de drivers, incluso para guardar directamente
+# la información en un servicio en la nube. En este caso, seleccionamos el driver "local".
 volumes:
   datos:
     driver: local
@@ -79,5 +109,6 @@ volumes:
   data:
     driver: local
   
+#Definicion de redes de trabajo entre contenedores. En este caso se defi
 networks:
    casasegura: {}
