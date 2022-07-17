@@ -1,0 +1,7 @@
+Servicios/dbData/**
+.Servicios/mosquitto/datos/**
+.Servicios/mosquitto/registros/**
+.Servicios/nodered/data/**
+.Servicios/openhab/addons/**
+.Servicios/openhab/conf/**
+.Servicios/openhab/userdata/**
