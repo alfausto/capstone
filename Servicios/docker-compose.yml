@@ -1,4 +1,7 @@
+#Dependiendo la version de docker que utilicen deben o no utilizar "version". Si utilizas las ultimas versiones
+#de docker, no es necesario describirlo. Caso contrario, "desdocumentar" la linea de version.
 version: '2.2'
+#version: '3.7'
 
 #Script de definición de servicios para su levantamiento como entorno de trabajo
 # Se documentará cada elemento del archivo solo 1 vez. Si existen comentarios repetidos, 
@@ -12,13 +15,13 @@ services:
     image: mariadb:10.8
     #Expose permite abrir un puerto de manera interna (para uso con otros contenedores). En este caso, se podrá usar
     # el puerto 3306 entre los contenedores de docker
-    expose:
-      - 3306
+    ports:
+      - 3306:3306
     #Define la carpeta origenLocal:origenImagen. En este caso, significa que en la carpeta que estoy definiendo como origenLocal
     # guardará los datos de la BD, ya que var/lib/mysql es la carpeta que usa por defecto el servicio de mysql para guardar datos
     volumes:
       #Forma Windows. Se tiene que anotar la dirección absoluta.
-      - D:\desarrollo\capstone\Servicios\dbdata:/var/lib/mysql
+      - E:\desarrollo\capstone\Servicios\dbdata:/var/lib/mysql
       #Forma Linux/Mac. Puede ser direccion absoluta o relativa.
       #- ./dbdata:/var/lib/mysql
     #Variables de entorno. Para usarse dentro de la imagen. Permite añadir configuraciones adicionales para poder utilizar la
@@ -43,8 +46,8 @@ services:
       - 9001:9001
     volumes:
       #Forma WIndows
-      - D:\desarrollo\capstone\Servicios\mosquitto\datos:/mosquitto/data
-      - D:\desarrollo\capstone\Servicios\mosquitto\registros:/mosquitto/log
+      - E:\desarrollo\capstone\Servicios\mosquitto\datos:/mosquitto/data
+      - E:\desarrollo\capstone\Servicios\mosquitto\registros:/mosquitto/log
       #Forma Linux/Mac
       #- ./mosquitto/datos:/mosquitto/data
       #- ./mosquitto/registros:/mosquitto/log
@@ -60,7 +63,7 @@ services:
       - 1880:1880
     volumes:
       #Forma Windows
-      - D:\desarrollo\capstone\Servicios\nodered\data:/data
+      - E:\desarrollo\capstone\Servicios\nodered\data:/data
       #FormaLinux/Mac
       #- ./nodered/data:/data
     networks:
@@ -68,31 +71,20 @@ services:
         aliases:
           - nodered
 
-  #Definición de servicio openhab
-  openhab:
-    image: "openhab/openhab:3.3.0"
-    #Configurar si se desea levantar el servicio cada que caiga. En este caso activamos la opcion. Puede añadirse a las anteriores sin problema.
-    restart: always
+#Definición de servicio Grafana
+  grafana:
+    image: "grafana/grafana:9.0.4"
     ports:
-      - 8080:8080
-      - 8443:8443
+      - 3000:3000
     volumes:
       #Forma Windows
-      - D:\desarrollo\capstone\Servicios\openhab\addons:/openhab/addons
-      - D:\desarrollo\capstone\Servicios\openhab\conf:/openhab/conf
-      - D:\desarrollo\capstone\Servicios\openhab\userdata:/openhab/userdata
+      - E:\desarrollo\capstone\Servicios\grafana:/var/lib/grafana
       #Forma Linux/Mac
-      #- ./openhab/addons:/openhab/addons
-      #- ./openhab/conf:/openhab/conf
-      #- ./openhab/userdata:/openhab/userdata
-    environment:
-      OPENHAB_HTTP_PORT: "8080"
-      OPENHAB_HTTPS_PORT: "8443"
-      EXTRA_JAVA_OPTS: "-Duser.timezone=America/Mexico_City"
+      #- ./grafana:/var/lib/grafana
     networks:
       casasegura:
         aliases:
-          - openhab
+          - grafana
 
 #Configuramos todas aquellas carpetas que se escibieron en los servicios. Se pueden usar distintos tipos de drivers, incluso para guardar directamente
 # la información en un servicio en la nube. En este caso, seleccionamos el driver "local".
@@ -103,19 +95,11 @@ volumes:
     driver: local
   dbdata:
     driver: local
-  localtime:
-    driver: local
-  timezone:
-    driver: local
-  addons:
-    driver: local
-  conf:
-    driver: local
-  userdata:
-    driver: local
   data:
     driver: local
+  grafana:
+    driver: local
   
-#Definicion de redes de trabajo entre contenedores. En este caso se defi
+#Definicion de redes de trabajo entre contenedores.
 networks:
-   casasegura: {}
+  casasegura: {}

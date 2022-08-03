@@ -1,4 +1,4 @@
-Servicios/dbData/**
+.Servicios/dbData/**
 .Servicios/mosquitto/datos/**
 .Servicios/mosquitto/registros/**
 .Servicios/nodered/data/**
